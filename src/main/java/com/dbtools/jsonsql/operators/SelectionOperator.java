@@ -22,8 +22,8 @@ public class SelectionOperator implements Operator{
 		this.expression = expression;
 	}
 	
-	public Map<String,Object> getTuple(Map<String,Object> jsonDocument) {
-		Map<String,Object> resultTuple =operator.getTuple(jsonDocument); 
+	public Map<String,Object> getTuple() {
+		Map<String,Object> resultTuple =operator.getTuple(); 
 		
 		if (getLeafValue(expression, resultTuple))
 			return resultTuple;

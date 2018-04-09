@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.dbtools.jsonsql.operators.ScanOperator;
 import com.dbtools.jsonsql.operators.SelectionOperator;
 import com.dbtools.jsonsql.operators.UnNestOperator;
 import com.dbtools.jsonsql.queryprocessor.QueryParser;
@@ -19,10 +20,12 @@ import net.sf.jsqlparser.expression.Expression;
 public class QueryExecutor {
 
 	public void execute() {
-		String jsonDocument = "{a : [{b : 1000,c : 2 }, {b : 100,c : 2 }]}";
 
-		List<String> jsonDocuments = scanRecords("/Users/abhinisinha/Documents/PersonalProjects/input.txt");
-		String query = "Select * from json where zip =  80017";
+		//List<String> jsonDocuments = scanRecords("/Users/abhinisinha/Documents/PersonalProjects/input.txt");
+		List<String> jsonDocuments =  new ArrayList<String>();
+		jsonDocuments.add("{a : {b :{d : [{p:{ a:10, b: 67}}, {q: 20}], e: 2}, c:2}}");
+		
+		String query = "Select * from json where e =  2";
 		QueryParser parser = new QueryParser();
 		try {
 			parser.parseQuery(query);
@@ -31,36 +34,15 @@ public class QueryExecutor {
 			e.printStackTrace();
 		}
 
-		UnNestOperator unnest = new UnNestOperator();
-		Gson gson = new Gson();
-		Map<String, Object> map = new HashMap<String, Object>();
-
-		for (String document : jsonDocuments) {
-			map = (Map<String, Object>) gson.fromJson(document, map.getClass());
-			SelectionOperator selectionOperator = new SelectionOperator(parser.getWhereClause(), unnest);
-			map = selectionOperator.getTuple(map);
-			System.out.println(map);
-		}
-	}
-
-	private List<String> scanRecords(String filePath) {
-		List<String> documents = new ArrayList<String>();
-		BufferedReader bufferedReader = null;
-
-		try {
-			FileReader reader = new FileReader(filePath);
-			bufferedReader = new BufferedReader(reader);
-			String document = null;
-
-			while ((document = bufferedReader.readLine()) != null) {
-				documents.add(document);
-			}
-			bufferedReader.close();
-		} catch (IOException exception) {
-			exception.printStackTrace();
-
-		}
-		return documents;
+		
+		ScanOperator scanOperator = new ScanOperator("/Users/abhinisinha/Documents/PersonalProjects/input.txt");
+		UnNestOperator unnest1 = new UnNestOperator("b", scanOperator);
+		UnNestOperator unnest = new UnNestOperator("d",unnest1);
+		System.out.println(unnest.getTuple());
+		UnNestOperator unnest2 = new UnNestOperator("a",unnest);
+		System.out.println(unnest2.getTuple());
+		SelectionOperator selectionOperator = new SelectionOperator(parser.getWhereClause(), unnest);
+		System.out.println(selectionOperator.getTuple());
 	}
 
 	public static void main(String[] args) {
