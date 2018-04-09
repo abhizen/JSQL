@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.dbtools.jsonsql.operators.NestOperator;
 import com.dbtools.jsonsql.operators.ScanOperator;
 import com.dbtools.jsonsql.operators.SelectionOperator;
 import com.dbtools.jsonsql.operators.UnNestOperator;
@@ -35,14 +36,20 @@ public class QueryExecutor {
 		}
 
 		
+//		ScanOperator scanOperator = new ScanOperator("/Users/abhinisinha/Documents/PersonalProjects/input.txt");
+//		UnNestOperator unnest1 = new UnNestOperator("b", scanOperator);
+//		UnNestOperator unnest = new UnNestOperator("d",unnest1);
+//		System.out.println(unnest.getTuple());
+//		UnNestOperator unnest2 = new UnNestOperator("a",unnest);
+//		System.out.println(unnest2.getTuple());
+//		SelectionOperator selectionOperator = new SelectionOperator(parser.getWhereClause(), unnest);
+//		System.out.println(selectionOperator.getTuple());
 		ScanOperator scanOperator = new ScanOperator("/Users/abhinisinha/Documents/PersonalProjects/input.txt");
-		UnNestOperator unnest1 = new UnNestOperator("b", scanOperator);
-		UnNestOperator unnest = new UnNestOperator("d",unnest1);
-		System.out.println(unnest.getTuple());
-		UnNestOperator unnest2 = new UnNestOperator("a",unnest);
-		System.out.println(unnest2.getTuple());
-		SelectionOperator selectionOperator = new SelectionOperator(parser.getWhereClause(), unnest);
-		System.out.println(selectionOperator.getTuple());
+		List<String> keys = new ArrayList<String>();
+		keys.add("a");
+		keys.add("c");
+		NestOperator nestOperator = new NestOperator(keys, "a1",scanOperator);
+		System.out.println(nestOperator.getTuple());
 	}
 
 	public static void main(String[] args) {
